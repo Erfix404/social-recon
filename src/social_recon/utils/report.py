@@ -1,4 +1,5 @@
-"""Report generator — produces JSON, Markdown, and HTML reports."""
+"""Report generator — produces JSON, Markdown, HTML, and CSV reports."""
+import csv
 import json
 import time
 from pathlib import Path
@@ -7,6 +8,9 @@ from collections import Counter
 
 def generate_report(output_dir: str | Path, pipeline_result: dict) -> dict[str, str]:
     """Generate all report formats. Returns dict of format -> filepath."""
+    from .confidence import score_all_findings
+    from .entity_graph import build_entity_graph, generate_mermaid
+
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     reports = {}
@@ -18,23 +22,74 @@ def generate_report(output_dir: str | Path, pipeline_result: dict) -> dict[str, 
     else:
         data = pipeline_result
 
-    # 1. JSON report (already saved by pipeline)
+    # Apply confidence scoring to all findings
+    findings = data.get("findings", [])
+    scored_findings = score_all_findings(findings)
+    data["findings"] = scored_findings
+
+    # Build entity graph
+    graph = build_entity_graph(scored_findings)
+    data["entity_graph"] = {
+        "stats": graph["stats"],
+        "mermaid": generate_mermaid(graph),
+    }
+
+    # Save updated JSON with scores
+    results_file.write_text(json.dumps(data, indent=2, ensure_ascii=False, default=str), encoding="utf-8")
     reports["json"] = str(results_file)
 
-    # 2. Markdown report
+    # 1. Markdown report
     md_path = output_dir / "report.md"
     md_content = _generate_markdown(data)
     md_path.write_text(md_content, encoding="utf-8")
     reports["markdown"] = str(md_path)
 
-    # 3. HTML report
+    # 2. HTML report (with entity graph)
     html_path = output_dir / "report.html"
-    html_content = _generate_html(data)
+    html_content = _generate_html(data, graph)
     html_path.write_text(html_content, encoding="utf-8")
     reports["html"] = str(html_path)
 
+    # 3. CSV export
+    csv_path = output_dir / "findings.csv"
+    _generate_csv(scored_findings, csv_path)
+    reports["csv"] = str(csv_path)
+
     print(f"  [+] Reports generated: {', '.join(reports.keys())}")
     return reports
+
+
+def _generate_csv(findings: list[dict], csv_path: Path):
+    """Export findings to CSV for spreadsheet import."""
+    with open(csv_path, "w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f)
+        writer.writerow(["source", "data_type", "value", "confidence", "confidence_label", "metadata"])
+        for finding in findings:
+            value = finding.get("value", "")
+            if isinstance(value, (dict, list)):
+                value = json.dumps(value, ensure_ascii=False)
+            metadata = finding.get("metadata", "")
+            if isinstance(metadata, (dict, list)):
+                metadata = json.dumps(metadata, ensure_ascii=False)
+            confidence = finding.get("confidence", 0)
+            if confidence >= 0.85:
+                label = "very_high"
+            elif confidence >= 0.7:
+                label = "high"
+            elif confidence >= 0.5:
+                label = "medium"
+            elif confidence >= 0.3:
+                label = "low"
+            else:
+                label = "very_low"
+            writer.writerow([
+                finding.get("source", ""),
+                finding.get("data_type", ""),
+                str(value)[:500],
+                f"{confidence:.3f}",
+                label,
+                str(metadata)[:300],
+            ])
 
 
 def _generate_markdown(data: dict) -> str:
@@ -45,10 +100,22 @@ def _generate_markdown(data: dict) -> str:
     findings = data.get("findings", [])
     context = data.get("context", {})
 
+    # Confidence summary
+    high_conf = sum(1 for f in findings if f.get("confidence", 0) >= 0.7)
+    med_conf = sum(1 for f in findings if 0.4 <= f.get("confidence", 0) < 0.7)
+    low_conf = sum(1 for f in findings if f.get("confidence", 0) < 0.4)
+
+    # Entity graph
+    entity_stats = data.get("entity_graph", {}).get("stats", {})
+    mermaid = data.get("entity_graph", {}).get("mermaid", "")
+
     lines = [
         f"# 🔭 گزارش OSINT — {target}",
         f"",
         f"**نوع ورودی:** {target_type} | **حالت اسکن:** {mode} | **تعداد یافته‌ها:** {len(findings)}",
+        "",
+        f"**اعتماد:** {high_conf} بالا | {med_conf} متوسط | {low_conf} پایین",
+        f"**گراف:** {entity_stats.get('total_nodes', 0)} موجودیت | {entity_stats.get('total_edges', 0)} ارتباط",
         "",
     ]
 
@@ -67,6 +134,8 @@ def _generate_markdown(data: dict) -> str:
             if isinstance(val, dict):
                 platform = val.get("platform", val.get("site", ""))
                 url = val.get("url", "")
+                conf = p.get("confidence", 0)
+                conf_label = "🟢" if conf >= 0.7 else "🟡" if conf >= 0.5 else "🔴"
                 extras = []
                 if val.get("title"):
                     extras.append(f"عنوان: {val['title']}")
@@ -75,7 +144,7 @@ def _generate_markdown(data: dict) -> str:
                 if val.get("followers"):
                     extras.append(f"فالوور: {val['followers']}")
                 extra_str = " — " + " | ".join(extras) if extras else ""
-                lines.append(f"- **{platform}**: [{url}]({url}){extra_str}")
+                lines.append(f"- {conf_label} **{platform}**: [{url}]({url}){extra_str} (اعتماد: {conf:.0%})")
         lines.append("")
 
     # Emails
@@ -185,13 +254,23 @@ def _generate_markdown(data: dict) -> str:
     total_profiles = len(profiles)
     lines.append(f"**📊 خلاصه:** {total_profiles} پروفایل | {len(emails)} ایمیل | {len(phones)} تلفن | {len(findings)} یافته کل")
     lines.append("")
+
+    # Entity graph (Mermaid)
+    if mermaid and entity_stats.get("total_nodes", 0) > 0:
+        lines.append("## 🕸️ نمودار روابط")
+        lines.append("```mermaid")
+        lines.append(mermaid)
+        lines.append("```")
+        lines.append("")
+
     lines.append("*گزارش خودکار توسط Social-Recon v2.0 تولید شد. فقط داده‌های عمومی.*")
 
     return "\n".join(lines)
 
 
-def _generate_html(data: dict) -> str:
+def _generate_html(data: dict, graph: dict = None) -> str:
     """Generate interactive HTML report."""
+    from .entity_graph import generate_html_graph
     target = data.get("target", "unknown")
     target_type = data.get("target_type", "unknown")
     mode = data.get("mode", "full")
@@ -228,12 +307,19 @@ def _generate_html(data: dict) -> str:
         url = val.get("url", "#")
         title = val.get("title", val.get("name", val.get("username", "")))
         confidence = f.get("confidence", 0)
-        conf_color = "#4caf50" if confidence >= 0.7 else "#ff9800" if confidence >= 0.4 else "#f44336"
+        if confidence >= 0.85:
+            conf_color, conf_label = "#4caf50", "بسیار بالا"
+        elif confidence >= 0.7:
+            conf_color, conf_label = "#8bc34a", "بالا"
+        elif confidence >= 0.5:
+            conf_color, conf_label = "#ff9800", "متوسط"
+        else:
+            conf_color, conf_label = "#f44336", "پایین"
         profiles_html += f"""
         <tr>
             <td><strong>{platform}</strong></td>
             <td><a href="{url}" target="_blank">{title or url[:50]}</a></td>
-            <td><span style="color:{conf_color}">{confidence:.0%}</span></td>
+            <td><span style="color:{conf_color}" title="{confidence:.3f}">{conf_label} ({confidence:.0%})</span></td>
             <td>{f.get("source", "")}</td>
         </tr>"""
 
@@ -336,6 +422,12 @@ li {{ margin: 6px 0; }}
     <tr><th>پلتفرم</th><th>لینک</th><th>اعتماد</th><th>منبع</th></tr>
     {profiles_html if profiles_html else '<tr><td colspan="4" style="text-align:center">پروفایلی یافت نشد</td></tr>'}
 </table>
+</div>
+
+<h2>🕸️ نمودار روابط</h2>
+<div class="section">
+<p style="color:#8b949e;margin-bottom:12px">گره‌ها: {graph['stats']['total_nodes'] if graph else 0} | یال‌ها: {graph['stats']['total_edges'] if graph else 0}</p>
+{generate_html_graph(graph) if graph and graph['nodes'] else '<p style="color:#484f58">داده‌ای برای نمودار موجود نیست</p>'}
 </div>
 
 <h2>⚙️ ماژول‌ها</h2>
