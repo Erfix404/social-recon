@@ -228,26 +228,40 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     from ..modules.phone_intel import PhoneIntel
     from ..modules.email_enricher import EmailEnricher
     from ..modules.cert_transparency import CertTransparency
+    from ..modules.telegram_osint import TelegramOSINT
+    from ..modules.google_dorking import GoogleDorking
+    from ..modules.image_osint import ImageOSINT
+    from ..utils.report import generate_report
 
     target_type, clean = classify(target)
     pipeline = Pipeline(target=target, target_type=target_type, mode=mode)
 
-    mode_config = SCAN_MODES.get(mode, SCAN_MODES["full"])
-
-    # Register modules based on mode
     all_modules = []
 
-    # Always include Iranian platform modules (our advantage)
+    # Always include: Iranian platforms (our competitive advantage)
     all_modules.extend(get_iranian_modules(pipeline.config))
 
-    # Add other modules based on mode
+    # Always include: Telegram OSINT (huge in Iran)
+    all_modules.append(TelegramOSINT(pipeline.config))
+
     if mode in ("full", "hawk"):
         all_modules.append(EmailEnricher(pipeline.config))
         all_modules.append(PhoneIntel(pipeline.config))
         all_modules.append(BreachChecker(pipeline.config))
+        all_modules.append(GoogleDorking(pipeline.config))
+        all_modules.append(ImageOSINT(pipeline.config))
 
     if mode == "hawk":
         all_modules.append(CertTransparency(pipeline.config))
 
     pipeline.register_modules(all_modules)
-    return await pipeline.execute()
+    result = await pipeline.execute()
+
+    # Generate reports (Markdown + HTML)
+    try:
+        reports = generate_report(pipeline.output_dir, result)
+        result["reports"] = reports
+    except Exception as e:
+        print(f"  [-] Report generation error: {e}")
+
+    return result
