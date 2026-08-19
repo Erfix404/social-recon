@@ -8,13 +8,14 @@ Chaining: username -> email/phone/name -> re-scan with found data
 """
 import sys, json, os, subprocess, time, re
 
-SCRIPTS = "/opt/data/skills/social-recon/scripts"
+SCRIPTS = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(SCRIPTS)
 sys.path.insert(0, SCRIPTS)
 
 TARGET = sys.argv[1]
 MODE = sys.argv[2].lower() if len(sys.argv) > 2 else "full"
 TARGET_CLEAN = TARGET.replace("@", "").replace(" ", "_")
-OUT_DIR = f"/opt/data/skills/social-recon/output/{TARGET_CLEAN}"
+OUT_DIR = os.path.join(PROJECT_ROOT, "output", TARGET_CLEAN)
 os.makedirs(OUT_DIR, exist_ok=True)
 os.makedirs(os.path.join(OUT_DIR, "images"), exist_ok=True)
 

@@ -1,39 +1,32 @@
 ---
 name: social-recon
-description: "Use when the user wants to perform OSINT reconnaissance on a username, email, or phone number — extracting all public data across global and Persian platforms."
-tags: [recon, osint, social, telegram]
-model: gpt-4o-mini
+description: "Advanced OSINT reconnaissance — extract public data from usernames, emails, and phone numbers across 30+ global and 25+ Persian platforms."
+tags: [recon, osint, social, telegram, iranian, security]
 ---
 
-# Social Recon Skill
+# Social-Recon v2.0
 
-This skill enables automated, comprehensive OSINT scanning using publicly available data sources.
+Async OSINT framework with exceptional Iranian platform coverage.
 
 ## Supported Input Types
-- Username (e.g., `amirezamky9` or `@amirezamky9`)
-- Email address
-- Phone number
-- Domain name
-
-## Platforms Covered
-### International
-- Twitter, Instagram, GitHub, Reddit, TikTok, Medium, YouTube
-- HaveIBeenPwned, Hunter.io, Clearbit
-- Shodan, Censys, ZoomEye
-
-### Persian / Iran-Focused
-- Aparat, Filimo, Okala, Hamijar, Jobinja, Zoomg, Snapp, Divar
-- Telegram public channels and bots
+- Username (e.g., `erfix404` or `@erfix404`)
+- Email address (e.g., `user@example.com`)
+- Phone number (e.g., `09123456789`)
+- Domain name (e.g., `example.com`)
 
 ## Usage
 ```bash
-./run.sh <username_or_identifier>
+python run.py <target> [light|full|hawk]
 ```
 
-## Output
-- report.md (human-readable)
-- report.json (structured)
-- screenshots/ (where applicable)
+## Modes
+- **light**: Fast username/email lookup (~30s)
+- **full**: All passive modules + Iranian platforms (~2-5min)
+- **hawk**: Maximum recon including breach checks, CT logs (~5-10min)
 
-## Privacy Note
-Only public data is collected. No login, no cookies, no scraping behind authentication.
+## Unique Capabilities
+- 25+ Iranian platforms (Aparat, Virgool, Jobinja, Digikala, Eitaa, Bale, Rubika...)
+- Iranian breach database checking
+- Iranian phone operator identification
+- Certificate Transparency subdomain discovery
+- Email enrichment (Gravatar, GitHub commits, EmailRep)

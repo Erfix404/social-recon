@@ -1,13 +1,39 @@
-# Recon output (contains personal recon data — never commit)
-output/amirezamky9/
-output/test_network/
-output/test_phone/
-output/test_secret/
-output/*/
+# Recon output (contains personal data — NEVER commit)
+output/
+results/
+reports/
+queue.txt
 
-# Maigret temp reports
+# Legacy temp files
 scripts/reports/
-
-# Test JSON outputs in scripts/
 scripts/*.json
 scripts/*.log
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment / secrets
+.env
+*.env.local
+
+# OS
+.DS_Store
+Thumbs.db

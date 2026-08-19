@@ -1,0 +1,18 @@
+# Core
+httpx[socks]>=0.27.0
+requests>=2.31.0
+
+# Async
+asyncio>=3.4.3
+
+# Data
+orjson>=3.10.0
+
+# Phone validation
+phonenumbers>=8.13.0
+
+# Network/Infrastructure
+dnspython>=2.6.0
+
+# Utilities
+fake-useragent>=1.5.0
