@@ -1,0 +1,140 @@
+[*] Target: @amirezamky9
+[*] Classified: username -> amirezamky9
+[*] Mode: full
+
+=== Stage 1: Initial Scan ===
+[+] Deep recon v2 saved (3 emails, 0 phones, 5 images, 6 profiles)
+
+=== Stage 2: Parse Results ===
+
+=== Stage 3: Chained Pipelines ===
+[*] Chaining email pipeline on: amirrezamokhtari2000@gmail.com
+[*] Running deep web + leak checks...
+[*] Searching Wayback Machine for: amirezamky9...
+[*] Wayback: No results
+[*] Searching Common Crawl...
+[*] Running web dorks...
+[+] Deep web search done. Wayback: 0, CC: 0, Search: 0
+{"target": "amirezamky9", "wayback_urls": [], "wayback_content": [], "commoncrawl_hits": [], "search_hits": []}
+[*] Checking HIBP for: amirrezamokhtari2000@gmail.com
+[*] Checking dehashed.com...
+[*] Checking against known Iranian data leak databases...
+[+] Leak check done. HIBP breaches: 0, Search hits: 0
+{"email": "amirrezamokhtari2000@gmail.com", "hibp_breaches": [], "hibp_pastes": [], "dehashed": [], "known_breaches": [{"name": "Iranian Bank Card Database Leak", "date": "2023-12", "fields": ["card_number", "cvv2", "expiry", "name", "phone"]}, {"name": "Iran Telecom User Leak", "date": "2022-03", "fields": ["phone", "name", "address", "national_code"]}, {"name": "Snapp Driver Database Leak", "date": "2021-08", "fields": ["phone", "name", "car_plate", "rating"]}, {"name": "Digikala Customer Leak", "date": "2020-11", "fields": ["name", "phone", "address", "email"]}, {"name": "Okala.ir User Leak", "date": "2019-05", "fields": ["username", "email", "phone"]}], "hibp_status": 403, "leak_search_hits": []}
+
+=== Stage 4: Advanced Modules ===
+[*] Searching repos of amirezamky9...
+[*] Checking public gists...
+[*] Checking issues/PRs mentioning target...
+[+] GitHub search done. Code matches: 0
+[+] Repos: 13
+[+] Emails found: []
+{"target": "amirezamky9", "code_matches": [], "emails_found": [], "user_mentions": [], "repo_mentions": [], "error": "GitHub API requires authentication for code search. Add GH_TOKEN.", "repos_list": [{"name": "Agent-Reach", "url": "https://github.com/Amirezamky9/Agent-Reach", "language": null, "description": "Give your AI agent eyes to see the entire internet. Read & search Twitter, Reddit, YouTube, GitHub, Bilibili, XiaoHongShu \u2014 one CLI, zero API fees."}, {"name": "Amirezamky9", "url": "https://github.com/Amirezamky9/Amirezamky9", "language": null, "description": "\u2728 Professional profile \u2014 AI Automation Engineer"}, {"name": "crypto_ingestion_pipeline", "url": "https://github.com/Amirezamky9/crypto_ingestion_pipeline", "language": "Python", "description": "On-demand, webhook-triggered OHLCV ingestion service. Fetches candlestick data from KuCoin and upserts into PostgreSQL. Smart delta + backfill, zero DDL, zero disk logs."}, {"name": "hermes-agent-self-evolution", "url": "https://github.com/Amirezamky9/hermes-agent-self-evolution", "language": "Python", "description": "\u2692 Evolutionary self-improvement for Hermes Agent \u2014 optimize skills, prompts, and code using DSPy + GEPA"}, {"name": "hermes-agent-toolkit", "url": "https://github.com/Amirezamky9/hermes-agent-toolkit", "language": "Python", "description": "Complete AI agent toolkit \u2014 cookie sync, Telegram automation, and research tools for 16+ platforms"}, {"name": "hermes-bale-adapter", "url": "https://github.com/Amirezamky9/hermes-bale-adapter", "language": "Python", "description": "Bale messenger platform adapter for Hermes Agent \u2014 Telegram-compatible, drop-in plugin"}, {"name": "hermes-reach", "url": "https://github.com/Amirezamky9/hermes-reach", "language": "Python", "description": "Hermes Reach \u2014 AI-agent toolkit: cookie sync, Telegram automation, multi-platform research (built on Agent-Reach)"}, {"name": "n8n-html-to-pdf", "url": "https://github.com/Amirezamky9/n8n-html-to-pdf", "language": "HTML", "description": null}, {"name": "n8n-nodes-bale", "url": "https://github.com/Amirezamky9/n8n-nodes-bale", "language": "TypeScript", "description": null}, {"name": "n8n-teacher-bot", "url": "https://github.com/Amirezamky9/n8n-teacher-bot", "language": null, "description": "Multi-mode n8n Telegram bot: AI teacher for n8n learning + WorkflowYab semantic RAG search. Built entirely in n8n with MCP tools, email OTP auth, PostgreSQL memory."}, {"name": "n8n-torob-scraper", "url": "https://github.com/Amirezamky9/n8n-torob-scraper", "language": null, "description": "Scrape product listings and prices from torob.com - an n8n workflow for Persian e-commerce price monitoring"}, {"name": "notebooklm-py", "url": "https://github.com/Amirezamky9/notebooklm-py", "language": null, "description": "Unofficial Python API and agentic skill for Google Gemini Notebook. Full programmatic access to NotebookLM's features\u2014including capabilities the web UI doesn't expose\u2014via Python, CLI, and AI agents like Claude Code, Codex, and OpenClaw."}, {"name": "steelfront-fps", "url": "https://github.com/Amirezamky9/steelfront-fps", "language": "JavaScript", "description": "STEELFRONT \u2014 AAA-style ThreeJS FPS (Claude Code vs Hermes game battle test)"}], "gists": []}
+[+] Telegram channel scan done.
+[+] Channels checked: 0
+[+] Mentions found: 0
+[+] Links/emails/phones extracted: 0
+{"target": "amirezamky9", "channels_found": [], "messages_found": [], "mentions_found": [], "links_found": []}
+
+=== Stage 5: Generating Final Report ===
+# 🔭 گزارش کامل استاک کردن — amirezamky9
+
+## 🧑 هویت یافت شده
+- نام: `Amir`
+
+## 📱 تلگرام
+- (از طریق Bot API پیدا نشد)
+
+## 🌐 پروفایل‌های شبکه‌های اجتماعی
+- [Instagram](https://www.instagram.com/amirezamky9/): ✅ — نام: amir | بیو: Logical Error , Something Went Wrong! | فالوور: 65 | خصوصی: True
+- [GitHub](https://github.com/amirezamky9): ✅ — فالوور: 5
+- [Telegram](https://t.me/amirezamky9): ✅ — نام: Amir | بیو: 19/06
+- [Kick](https://kick.com/amirezamky9): ✅
+- [fixya](https://www.fixya.com/users/amirezamky9): ✅
+- [GitHubGist](https://gist.github.com/amirezamky9): ✅
+
+## 🐙 GitHub / کد
+- نام: `None`
+- بیو: `None`
+- شرکت: `None`
+- محل: `None`
+- وب‌سایت: ``
+- ایمیل عمومی: `None`
+- ریپوها: 13 | فالوور: 5 | فالوویینگ: 7
+- تاریخ عضویت: `2025-07-21T16:09:08Z`
+- فعالیت‌های اخیر:
+  - WatchEvent در `NousResearch/hermes-agent` (2026-08-18)
+  - WatchEvent در `Thysrael/Horizon` (2026-08-18)
+  - WatchEvent در `Tiger3807861189/DeepSeek-V4-J-Space-Capability-Realization-Report` (2026-08-18)
+  - WatchEvent در `opendataloader-project/opendataloader-pdf` (2026-08-17)
+  - WatchEvent در `erfan138057/bale-hermes` (2026-08-16)
+  - WatchEvent در `vectorize-io/hindsight` (2026-08-12)
+  - WatchEvent در `Oqura-ai/deepdoc` (2026-08-11)
+  - WatchEvent در `fagemx/gstack-game` (2026-08-11)
+  - WatchEvent در `mohsen1/rust-debugger-skill` (2026-08-11)
+  - WatchEvent در `PBnicad/telegram-bot-grammy-skill` (2026-08-11)
+
+## 📧 ایمیل‌های یافت شده
+- `amirrezamokhtari2000@gmail.com`
+- `noreply@github.com`
+- `amirezamky9@users.noreply.github.com`
+
+## 📋 holehe: no regex hits
+```
+d, and were replaced with REPLACEMENT CHARACTER.
+
+ 83%|████████▎ | 101/121 [00:02<00:00, 51.22it/s]
+ 89%|████████▉ | 108/121 [00:02<00:00, 53.19it/s]
+ 95%|█████████▌| 115/121 [00:02<00:00, 39.69it/s]
+100%|██████████| 121/121 [00:10<00:00,  3.36it/s]
+100%|██████████| 121/121 [00:10<00:00, 11.87it/s]
+
+```
+
+## 📞 شماره موبایل
+- شماره موبایل یافت نشد.
+
+## 🖼 تصاویر یافت شده
+- **instagram**: /opt/data/skills/social-recon/output/amirezamky9/images/instagram.jpg (13289 bytes, md5: 8ca244e61e)
+- **github**: /opt/data/skills/social-recon/output/amirezamky9/images/github.png (1531 bytes, md5: a1efee0e4f)
+- **telegram**: /opt/data/skills/social-recon/output/amirezamky9/images/telegram.jpg (30772 bytes, md5: 048978ba9e)
+- **github_avatar**: /opt/data/skills/social-recon/output/amirezamky9/images/github_avatar.png (1531 bytes, md5: a1efee0e4f)
+- **telegram_profile**: /opt/data/skills/social-recon/output/amirezamky9/images/telegram_profile.jpg (30772 bytes, md5: 048978ba9e)
+
+## 🇮🇷 پلتفرم‌های فارسی
+- [aparat](https://www.aparat.com/amirezamky9): ✅ (200)
+- [digikala](https://www.digikala.com/search/?q=amirezamky9): ✅ (200)
+- [filimo](https://www.filimo.com/search?q=amirezamky9): ✅ (200)
+
+## 🌐 وب عمیق و ارشیو
+- نتیجه‌ای یافت نشد.
+
+## 🔍 جستجو در کدهای گیت‌هاب
+- نیاز به لاگین گیت‌هاب یا نتیجه‌ای یافت نشد.
+
+**ریپوهای عمومی (13):**
+- [Agent-Reach](https://github.com/Amirezamky9/Agent-Reach) (None)
+- [Amirezamky9](https://github.com/Amirezamky9/Amirezamky9) (None)
+- [crypto_ingestion_pipeline](https://github.com/Amirezamky9/crypto_ingestion_pipeline) (Python)
+- [hermes-agent-self-evolution](https://github.com/Amirezamky9/hermes-agent-self-evolution) (Python)
+- [hermes-agent-toolkit](https://github.com/Amirezamky9/hermes-agent-toolkit) (Python)
+- [hermes-bale-adapter](https://github.com/Amirezamky9/hermes-bale-adapter) (Python)
+- [hermes-reach](https://github.com/Amirezamky9/hermes-reach) (Python)
+- [n8n-html-to-pdf](https://github.com/Amirezamky9/n8n-html-to-pdf) (HTML)
+- [n8n-nodes-bale](https://github.com/Amirezamky9/n8n-nodes-bale) (TypeScript)
+- [n8n-teacher-bot](https://github.com/Amirezamky9/n8n-teacher-bot) (None)
+
+## 💬 جستجو در کانال‌های تلگرامی
+- منشار یا پیامی یافت نشد.
+
+## 📋 بررسی دیتابیس‌های فاش‌شده
+
+## 🇮🇷 OSINT.ir + جستجوهای فارسی
+
+---
+**📊 خلاصه نهایی:** استخراج شده از 6 شبکه + 3 ایمیل + 5 تصویر
+*گزارش به‌صورت خودکار توسط social-recon تولید شد. فقط داده‌های عمومی.*
+
+[✅] Omni-Recon v3 complete! 7 stages.
+[✅] Report: /opt/data/skills/social-recon/output/amirezamky9/report.md
+[✅] JSON outputs: /opt/data/skills/social-recon/output/amirezamky9/*.json

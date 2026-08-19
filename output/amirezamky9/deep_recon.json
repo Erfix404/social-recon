@@ -1,0 +1,307 @@
+{
+  "emails": [
+    "amirrezamokhtari2000@gmail.com",
+    "noreply@github.com",
+    "amirezamky9@users.noreply.github.com"
+  ],
+  "phones": [],
+  "github_profile": {
+    "login": "Amirezamky9",
+    "id": 222064019,
+    "node_id": "U_kgDODTxtkw",
+    "avatar_url": "https://avatars.githubusercontent.com/u/222064019?v=4",
+    "gravatar_id": "",
+    "url": "https://api.github.com/users/Amirezamky9",
+    "html_url": "https://github.com/Amirezamky9",
+    "followers_url": "https://api.github.com/users/Amirezamky9/followers",
+    "following_url": "https://api.github.com/users/Amirezamky9/following{/other_user}",
+    "gists_url": "https://api.github.com/users/Amirezamky9/gists{/gist_id}",
+    "starred_url": "https://api.github.com/users/Amirezamky9/starred{/owner}{/repo}",
+    "subscriptions_url": "https://api.github.com/users/Amirezamky9/subscriptions",
+    "organizations_url": "https://api.github.com/users/Amirezamky9/orgs",
+    "repos_url": "https://api.github.com/users/Amirezamky9/repos",
+    "events_url": "https://api.github.com/users/Amirezamky9/events{/privacy}",
+    "received_events_url": "https://api.github.com/users/Amirezamky9/received_events",
+    "type": "User",
+    "user_view_type": "public",
+    "site_admin": false,
+    "name": null,
+    "company": null,
+    "blog": "",
+    "location": null,
+    "email": null,
+    "hireable": null,
+    "bio": null,
+    "twitter_username": null,
+    "public_repos": 13,
+    "public_gists": 0,
+    "followers": 5,
+    "following": 7,
+    "created_at": "2025-07-21T16:09:08Z",
+    "updated_at": "2026-08-11T21:55:48Z"
+  },
+  "github_events": [
+    {
+      "type": "WatchEvent",
+      "repo": "NousResearch/hermes-agent",
+      "created": "2026-08-18T22:57:57Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "Thysrael/Horizon",
+      "created": "2026-08-18T07:27:27Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "Tiger3807861189/DeepSeek-V4-J-Space-Capability-Realization-Report",
+      "created": "2026-08-18T07:13:49Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "opendataloader-project/opendataloader-pdf",
+      "created": "2026-08-17T09:22:42Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "erfan138057/bale-hermes",
+      "created": "2026-08-16T20:15:12Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "vectorize-io/hindsight",
+      "created": "2026-08-12T22:16:05Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "Oqura-ai/deepdoc",
+      "created": "2026-08-11T15:27:26Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "fagemx/gstack-game",
+      "created": "2026-08-11T12:42:21Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "mohsen1/rust-debugger-skill",
+      "created": "2026-08-11T12:38:26Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "PBnicad/telegram-bot-grammy-skill",
+      "created": "2026-08-11T10:51:05Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "agntdev/skills",
+      "created": "2026-08-11T10:48:32Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "fathah/hermes-desktop",
+      "created": "2026-08-08T16:49:31Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "snarktank/ralph",
+      "created": "2026-08-08T00:30:31Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "orihomie/aiobot-skill",
+      "created": "2026-08-07T20:17:21Z"
+    },
+    {
+      "type": "WatchEvent",
+      "repo": "qwwiwi/agentos-skills",
+      "created": "2026-08-07T20:15:14Z"
+    },
+    {
+      "type": "PushEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T15:00:40Z"
+    },
+    {
+      "type": "CreateEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:59:40Z"
+    },
+    {
+      "type": "PushEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:17:14Z"
+    },
+    {
+      "type": "PushEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:17:11Z"
+    },
+    {
+      "type": "PushEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:17:04Z"
+    },
+    {
+      "type": "CreateEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:15:11Z"
+    },
+    {
+      "type": "CreateEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:15:07Z"
+    },
+    {
+      "type": "PushEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:17:06Z"
+    },
+    {
+      "type": "CreateEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:15:13Z"
+    },
+    {
+      "type": "PushEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:17:17Z"
+    },
+    {
+      "type": "PullRequestEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T15:00:39Z"
+    },
+    {
+      "type": "PullRequestEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:59:59Z"
+    },
+    {
+      "type": "CreateEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:15:09Z"
+    },
+    {
+      "type": "PushEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:17:09Z"
+    },
+    {
+      "type": "PullRequestEvent",
+      "repo": "Amirezamky9/hermes-reach",
+      "created": "2026-08-07T14:17:16Z"
+    }
+  ],
+  "telegram_profile": {
+    "username": "amirezamky9",
+    "title": null,
+    "description": "19/06",
+    "photo_url": "https://cdn4.telesco.pe/file/evW2tW-MhM8MEwk1yWlmaHSQ8IC0vrbaLaOFAIBJ4G1ESAdaTgn937J-tNgBs2Nqwn9zuIvqT3N30U3avyVFRYSJ6xsLwVz_iSMjF5u9i_n0PF9Xp6HjyIt3kmm790oLzocWDuVH6j5El-ut_JOu3NUhOrAHWZhXkntLXebWDcyfcOjr_6rO-GRQa3hCJhfFCGLxZPVR5dFtyBlUstyqzJIiJYVYtzapw01L20ywHYWkKAi3JE0fuvV4OPUNJetNyE-NwLmuWID3O0lwMxQmNp-S78-4FbWyxIbkU8stsrjLMCn_lKY4tF1CssR6l-BbvIztTXy_PmUGWRVTGHgcLQ.jpg"
+  },
+  "search_hits": [],
+  "persian_platforms": {
+    "virgool": {
+      "url": "https://virgool.io/@amirezamky9",
+      "exists": false,
+      "status": 404,
+      "final_url": "https://virgool.io/@amirezamky9"
+    },
+    "quera": {
+      "url": "https://quera.org/profile/amirezamky9",
+      "exists": false,
+      "status": 404,
+      "final_url": "https://quera.org/profile/amirezamky9"
+    },
+    "aparat": {
+      "url": "https://www.aparat.com/amirezamky9",
+      "exists": true,
+      "status": 200,
+      "final_url": "https://www.aparat.com/amirezamky9"
+    },
+    "telegram": {
+      "url": "https://t.me/amirezamky9",
+      "exists": false,
+      "status": 200,
+      "final_url": "https://t.me/amirezamky9"
+    },
+    "hamijar": {
+      "url": "https://hamijar.ir/amirezamky9",
+      "exists": false,
+      "error": "HTTPSConnectionPool(host='hamijar.ir', port=443): Max retries exceeded with url: /amirezamky9 (Caused by NameResolutionError(\"HTTPSConnection(host='hamijar.ir', port=443): Failed to resolve 'hamijar.ir' ([Errno -2] Name or service not known)\"))"
+    },
+    "jobinja": {
+      "url": "https://jobinja.ir/search?keyword=amirezamky9",
+      "exists": false,
+      "status": 404,
+      "final_url": "https://jobinja.ir/search?keyword=amirezamky9"
+    },
+    "zoomg": {
+      "url": "https://zoomg.ir/?s=amirezamky9",
+      "exists": false,
+      "status": 200,
+      "final_url": "https://www.zoomg.ir/?s=amirezamky9"
+    },
+    "digikala": {
+      "url": "https://www.digikala.com/search/?q=amirezamky9",
+      "exists": true,
+      "status": 200,
+      "final_url": "https://www.digikala.com/search/?q=amirezamky9"
+    },
+    "snapp": {
+      "url": "https://snapp.ir/search?q=amirezamky9",
+      "exists": false,
+      "status": 404,
+      "final_url": "https://snapp.ir/search/?q=amirezamky9"
+    },
+    "okala": {
+      "url": "https://okala.ir/search/?q=amirezamky9",
+      "exists": false,
+      "status": 200,
+      "final_url": "https://www.okala.com"
+    },
+    "filimo": {
+      "url": "https://www.filimo.com/search?q=amirezamky9",
+      "exists": true,
+      "status": 200,
+      "final_url": "https://www.filimo.com/search?q=amirezamky9"
+    },
+    "bonyanat": {
+      "url": "https://bonyanat.ir/?s=amirezamky9",
+      "exists": false,
+      "error": "HTTPSConnectionPool(host='bonyanat.ir', port=443): Max retries exceeded with url: /?s=amirezamky9 (Caused by NameResolutionError(\"HTTPSConnection(host='bonyanat.ir', port=443): Failed to resolve 'bonyanat.ir' ([Errno -2] Name or service not known)\"))"
+    },
+    "setareh": {
+      "url": "https://setareh.ir/?s=amirezamky9",
+      "exists": false,
+      "error": "HTTPSConnectionPool(host='setareh.ir', port=443): Max retries exceeded with url: /?s=amirezamky9 (Caused by NameResolutionError(\"HTTPSConnection(host='setareh.ir', port=443): Failed to resolve 'setareh.ir' ([Errno -3] Temporary failure in name resolution)\"))"
+    },
+    "technoava": {
+      "url": "https://technoava.com/?s=amirezamky9",
+      "exists": true,
+      "status": 200,
+      "final_url": "https://technoava.com/?s=amirezamky9"
+    },
+    "khodemon": {
+      "url": "https://khodemon.com/search?q=amirezamky9",
+      "exists": false,
+      "error": "HTTPSConnectionPool(host='khodemon.com', port=443): Max retries exceeded with url: /search?q=amirezamky9 (Caused by NameResolutionError(\"HTTPSConnection(host='khodemon.com', port=443): Failed to resolve 'khodemon.com' ([Errno -3] Temporary failure in name resolution)\"))"
+    }
+  },
+  "images": [
+    {
+      "name": "github_avatar",
+      "path": "/opt/data/skills/social-recon/output/amirezamky9/images/github_avatar.png",
+      "md5": "a1efee0e4f",
+      "size": 1531
+    },
+    {
+      "name": "telegram_profile",
+      "path": "/opt/data/skills/social-recon/output/amirezamky9/images/telegram_profile.jpg",
+      "md5": "048978ba9e",
+      "size": 30772
+    }
+  ],
+  "social_profiles": {},
+  "extracted_fullnames": [],
+  "instagram_profile_status": "private or no reels"
+}
