@@ -231,6 +231,7 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     from ..modules.telegram_osint import TelegramOSINT
     from ..modules.google_dorking import GoogleDorking
     from ..modules.image_osint import ImageOSINT
+    from ..modules.secret_scanner import SecretScanner
     from ..utils.report import generate_report
 
     target_type, clean = classify(target)
@@ -253,6 +254,7 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
 
     if mode == "hawk":
         all_modules.append(CertTransparency(pipeline.config))
+        all_modules.append(SecretScanner(pipeline.config))
 
     pipeline.register_modules(all_modules)
     result = await pipeline.execute()

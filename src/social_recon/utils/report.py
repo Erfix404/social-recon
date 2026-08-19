@@ -157,6 +157,19 @@ def _generate_markdown(data: dict) -> str:
                 lines.append(f"- **{val.get('source', '')}**: {val.get('path', '')} ({val.get('size', 0)} bytes)")
         lines.append("")
 
+    # Secrets
+    secrets = by_type.get("secret", [])
+    if secrets:
+        lines.append("## 🔐 اسرار و اطلاعات حساس")
+        for s in secrets:
+            val = s.get("value", {})
+            if isinstance(val, dict):
+                stype = val.get("type", "")
+                src = val.get("source", "")
+                v = val.get("value", "")[:40]
+                lines.append(f"- **{stype}**: `{v}` (از: {src})")
+        lines.append("")
+
     # Email reputation
     rep = by_type.get("email_reputation", [])
     if rep:
@@ -194,6 +207,15 @@ def _generate_html(data: dict) -> str:
     phones_count = len(context.get("phones", []))
     successful_modules = sum(1 for m in modules.values() if m.get("success"))
 
+    # Chart data — findings by type
+    type_labels = json.dumps(list(by_type.keys()))
+    type_values = json.dumps(list(by_type.values()))
+
+    # Chart data — modules by duration
+    mod_names = json.dumps([n[:15] for n in modules.keys()])
+    mod_durations = json.dumps([round(m.get("duration", 0), 1) for m in modules.values()])
+    mod_success = json.dumps([1 if m.get("success") else 0 for m in modules.values()])
+
     # Profile rows
     profiles_html = ""
     for f in findings:
@@ -227,12 +249,26 @@ def _generate_html(data: dict) -> str:
         dur = info.get("duration", 0)
         modules_html += f"<tr><td>{name}</td><td>{status}</td><td>{findings_c}</td><td>{dur:.1f}s</td></tr>"
 
+    # Secrets HTML
+    secrets = [f for f in findings if f.get("data_type") == "secret"]
+    secrets_html = ""
+    for s in secrets[:20]:
+        val = s.get("value", {})
+        if isinstance(val, dict):
+            stype = val.get("type", "")
+            v = val.get("value", "")[:50]
+            src = val.get("source", "")[:30]
+            conf = s.get("confidence", 0)
+            conf_color = "#f44336" if conf >= 0.8 else "#ff9800" if conf >= 0.5 else "#8b949e"
+            secrets_html += f'<tr><td>{stype}</td><td><code>{v}</code></td><td>{src}</td><td style="color:{conf_color}">{conf:.0%}</td></tr>'
+
     return f"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>گزارش OSINT — {target}</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
 <style>
 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
 body {{ font-family: 'Segoe UI', Tahoma, sans-serif; background: #0d1117; color: #c9d1d9; padding: 20px; }}
@@ -244,6 +280,9 @@ h2 {{ color: #79c0ff; margin: 30px 0 15px; font-size: 20px; border-bottom: 1px s
 .stat {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 16px; text-align: center; }}
 .stat-num {{ font-size: 32px; font-weight: bold; color: #58a6ff; }}
 .stat-label {{ font-size: 12px; color: #8b949e; margin-top: 4px; }}
+.charts {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }}
+.chart-box {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; }}
+.chart-box canvas {{ max-height: 280px; }}
 table {{ width: 100%; border-collapse: collapse; background: #161b22; border: 1px solid #30363d; border-radius: 8px; overflow: hidden; }}
 th {{ background: #21262d; color: #79c0ff; padding: 12px; text-align: right; font-size: 13px; }}
 td {{ padding: 10px 12px; border-bottom: 1px solid #21262d; font-size: 14px; }}
@@ -258,6 +297,7 @@ li {{ margin: 6px 0; }}
 .badge-red {{ background: #3d1f1f; color: #f44336; }}
 .section {{ background: #161b22; border: 1px solid #30363d; border-radius: 8px; padding: 20px; margin-bottom: 16px; }}
 .footer {{ text-align: center; color: #484f58; margin-top: 40px; font-size: 12px; }}
+@media (max-width: 768px) {{ .charts {{ grid-template-columns: 1fr; }} }}
 </style>
 </head>
 <body>
@@ -280,6 +320,16 @@ li {{ margin: 6px 0; }}
 
 {f'<h2>📞 تلفن‌ها</h2><div class="section"><ul>{phones_html}</ul></div>' if phones_html else ''}
 
+<h2>📊 نمودار تحلیلی</h2>
+<div class="charts">
+    <div class="chart-box">
+        <canvas id="typeChart"></canvas>
+    </div>
+    <div class="chart-box">
+        <canvas id="moduleChart"></canvas>
+    </div>
+</div>
+
 <h2>🌐 پروفایل‌ها</h2>
 <div class="section">
 <table>
@@ -296,9 +346,64 @@ li {{ margin: 6px 0; }}
 </table>
 </div>
 
+{f"""<h2>🔐 اسرار و اطلاعات حساس</h2>
+<div class="section">
+<table>
+    <tr><th>نوع</th><th>مقدار</th><th>منبع</th><th>اعتماد</th></tr>
+    {secrets_html}
+</table>
+</div>""" if secrets_html else ''}
+
 <div class="footer">
     <p>Social-Recon v2.0 — فقط داده‌های عمومی — تولید شده در {time.strftime('%Y-%m-%d %H:%M')}</p>
 </div>
+
+<script>
+const chartColors = ['#58a6ff','#f97583','#56d364','#e3b341','#bc8cff','#79c0ff','#ff7b72','#7ee787','#d2a8ff','#ffa657','#a5d6ff','#ffdf5d'];
+
+// Findings by type — doughnut chart
+new Chart(document.getElementById('typeChart'), {{
+    type: 'doughnut',
+    data: {{
+        labels: {type_labels},
+        datasets: [{{ data: {type_values}, backgroundColor: chartColors, borderColor: '#0d1117', borderWidth: 2 }}]
+    }},
+    options: {{
+        responsive: true,
+        plugins: {{
+            title: {{ display: true, text: 'یافته‌ها بر اساس نوع', color: '#c9d1d9', font: {{ size: 14 }} }},
+            legend: {{ position: 'bottom', labels: {{ color: '#8b949e', font: {{ size: 11 }} }} }}
+        }}
+    }}
+}});
+
+// Modules by duration — bar chart
+new Chart(document.getElementById('moduleChart'), {{
+    type: 'bar',
+    data: {{
+        labels: {mod_names},
+        datasets: [{{
+            label: 'زمان (ثانیه)',
+            data: {mod_durations},
+            backgroundColor: {mod_success}.map(s => s ? '#56d364' : '#f97583'),
+            borderColor: '#30363d',
+            borderWidth: 1
+        }}]
+    }},
+    options: {{
+        responsive: true,
+        indexAxis: 'y',
+        plugins: {{
+            title: {{ display: true, text: 'زمان اجرای ماژول‌ها', color: '#c9d1d9', font: {{ size: 14 }} }},
+            legend: {{ display: false }}
+        }},
+        scales: {{
+            x: {{ ticks: {{ color: '#8b949e' }}, grid: {{ color: '#21262d' }} }},
+            y: {{ ticks: {{ color: '#8b949e', font: {{ size: 11 }} }}, grid: {{ display: false }} }}
+        }}
+    }}
+}});
+</script>
 
 </div>
 </body>
