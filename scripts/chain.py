@@ -145,11 +145,61 @@ if MODE == "full" and "deep_web_search" not in stages_run:
             run("leak_checker.py", arg=em, name=f"leak_check({em[:15]})")
 
 # ==================== Stage 4: Advanced Modules (Full/Hawk) =================
-print("\n=== Stage 4: Advanced Modules ===")
+print("\\n=== Stage 4: Advanced Modules ===")
 if MODE in ("full", "hawk"):
+    # --- Instagram Recon ---
+    username_for_instagram = clean
+    if "@" in clean:
+        username_for_instagram = clean.split("@")[0]
+    run("instagram_pipeline.py", arg=username_for_instagram, name="instagram_recon")
+
+    # --- Twitter/X Recon ---
+    run("twitter_pipeline.py", arg=username_for_instagram, name="twitter_recon")
+
+    # --- PhoneInfoga (if a phone number was found in chaining) ---
+    if phones and not target_type == "phone":
+        primary_phone = phones[0]
+        print(f"[*] Chaining PhoneInfoga on found number: {primary_phone}")
+        run("phoneinfoga_pipeline.py", arg=primary_phone, name=f"phoneinfoga({primary_phone[:15]})")
+
+    # --- Domain Infrastructure Recon (if a domain/email was the target) ---
+    if target_type in ("domain", "email"):
+        domain_target = TARGET.split("@")[1] if target_type == "email" else TARGET
+        run("infrastructure_recon.py", arg=domain_target, name=f"infra_recon({domain_target})")
+    elif target_type == "username":
+        # Check if maigret found domain-like URLs
+        mg = load_json_file("maigret.json")
+        if mg:
+            for site, info in mg.items():
+                if isinstance(info, dict):
+                    url = info.get("url_user", "") or info.get("url_main", "")
+                    if ":" not in url.replace("https://", "").replace("http://", "")[:0]:
+                        pass  # Skip non-domains
+            # Try the username as a potential domain
+            if "." not in clean:
+                run("infrastructure_recon.py", arg=f"{clean}.ir", name="infra_recon(ir)", timeout_sec=60)
+
+    # --- Advanced modules ---
+    run("github_advanced.py", arg=clean, name="github_advanced_recon", timeout_sec=180)
+    run("network_recon.py", arg=domain_target if target_type in ("domain", "email") else clean, name=f"network_recon", timeout_sec=120)
+
+    # --- Existing modules ---
     run("github_code_search.py", arg=clean, name="github_code_search")
     run("telegram_channel_search.py", arg=clean, name="telegram_channel_search")
     run("osint_ir_search.py", arg=clean, name="osint_ir_search")
+
+    # --- Secret Scanner ---
+    run("secret_scanner.py", arg=clean, name="secret_scanner", timeout_sec=180)
+
+    # --- Hawk mode: Dark web & advanced ---
+    if MODE == "hawk":
+        run("deep_web_search.py", arg=clean, name="deep_web_hawk", timeout_sec=120)
+        for em in emails[:1]:
+            if "noreply" not in em and "github.com" not in em:
+                run("leak_checker.py", arg=em, name=f"hawk_leak_check({em[:15]})")
+        for ph in phones[:1]:
+            if not target_type == "phone":
+                run("phoneinfoga_pipeline.py", arg=ph, name=f"hawk_phoneinfoga({ph[:15]})")
 
 # ==================== Stage 5: Final Report =================
 print("\n=== Stage 5: Generating Final Report ===")

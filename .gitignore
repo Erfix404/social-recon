@@ -1,0 +1,13 @@
+# Recon output (contains personal recon data — never commit)
+output/amirezamky9/
+output/test_network/
+output/test_phone/
+output/test_secret/
+output/*/
+
+# Maigret temp reports
+scripts/reports/
+
+# Test JSON outputs in scripts/
+scripts/*.json
+scripts/*.log
