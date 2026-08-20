@@ -27,6 +27,16 @@ from .base import BaseModule, ModuleResult, Finding, ModuleCategory
 
 INSTAGRAM_APP_ID = "936619743392459"
 
+# Mobile API headers — more effective than web headers
+MOBILE_HEADERS = {
+    "User-Agent": "Instagram 275.0.0.27.98 Android (30/11; 420dpi; 1080x2400; samsung; SM-G991B; o1s; exynos2100; en_US; 314665258)",
+    "X-IG-App-ID": INSTAGRAM_APP_ID,
+    "X-IG-Capabilities": "3brTvx0=",
+    "X-IG-Connection-Type": "WIFI",
+    "Accept-Language": "en-US",
+    "Accept-Encoding": "gzip, deflate",
+}
+
 
 class InstagramEagleEye(BaseModule):
     """Eagle-eye Instagram OSINT — profile, followers, posts, comments, activity."""
@@ -99,17 +109,14 @@ class InstagramEagleEye(BaseModule):
     # ── Public API (no auth) ────────────────────────────────────────
 
     async def _public_api_profile(self, client: httpx.AsyncClient, username: str) -> list[Finding]:
-        """Get profile via Instagram's public web API."""
+        """Get profile via Instagram's public and mobile APIs."""
         findings = []
 
-        # Method 1: web_profile_info endpoint
+        # Method 1: web_profile_info endpoint (web)
         resp = await self._make_request(
             client, "GET",
             f"https://i.instagram.com/api/v1/users/web_profile_info/?username={username}",
-            headers={
-                "X-IG-App-ID": INSTAGRAM_APP_ID,
-                "X-Requested-With": "XMLHttpRequest",
-            },
+            headers={"X-IG-App-ID": INSTAGRAM_APP_ID, "X-Requested-With": "XMLHttpRequest"},
         )
         if resp and resp.status_code == 200:
             try:
@@ -120,20 +127,81 @@ class InstagramEagleEye(BaseModule):
             except Exception:
                 pass
 
-        # Method 2: ?__a=1&__d=dis endpoint
+        # Method 2: Mobile API — usernameinfo endpoint (more data, mobile headers)
         resp2 = await self._make_request(
             client, "GET",
-            f"https://www.instagram.com/api/v1/users/web_profile_info/?username={username}",
-            headers={"X-IG-App-ID": INSTAGRAM_APP_ID},
+            f"https://i.instagram.com/api/v1/users/{username}/usernameinfo/",
+            headers=MOBILE_HEADERS,
         )
         if resp2 and resp2.status_code == 200:
             try:
                 data = resp2.json()
-                user = data.get("data", {}).get("user", {})
-                if user and not findings:
-                    findings.extend(self._parse_user_data(user, "public_api_v2"))
+                user = data.get("user", {})
+                if user:
+                    findings.extend(self._parse_mobile_user_data(user, "mobile_api"))
             except Exception:
                 pass
+
+        # Method 3: ?__a=1 endpoint
+        resp3 = await self._make_request(
+            client, "GET",
+            f"https://www.instagram.com/{username}/?__a=1&__d=dis",
+            headers={"X-IG-App-ID": INSTAGRAM_APP_ID},
+        )
+        if resp3 and resp3.status_code == 200:
+            try:
+                data = resp3.json()
+                user = data.get("graphql", {}).get("user", {})
+                if user and not findings:
+                    findings.extend(self._parse_user_data(user, "web_a1"))
+            except Exception:
+                pass
+
+        return findings
+
+    def _parse_mobile_user_data(self, user: dict, method: str) -> list[Finding]:
+        """Parse mobile API user data — has extra fields like HD pic, address."""
+        findings = []
+        username = user.get("username", "")
+
+        profile = {
+            "platform": "instagram",
+            "username": username,
+            "url": f"https://www.instagram.com/{username}/",
+            "user_id": user.get("pk", ""),
+            "full_name": user.get("full_name", ""),
+            "bio": user.get("biography", ""),
+            "followers": user.get("follower_count", 0),
+            "following": user.get("following_count", 0),
+            "posts_count": user.get("media_count", 0),
+            "is_private": user.get("is_private", False),
+            "is_verified": user.get("is_verified", False),
+            "is_business": user.get("is_business", False),
+            "business_category": user.get("business_category_name", ""),
+            "public_email": user.get("public_email", ""),
+            "public_phone": user.get("public_phone_number", ""),
+            "contact_phone": user.get("contact_phone_number", ""),
+            "external_url": user.get("external_url", ""),
+            "profile_pic": user.get("profile_pic_url", ""),
+            "hd_profile_pic": (user.get("hd_profile_pic_url_info", {}) or {}).get("url", ""),
+            "address_street": user.get("address_street", ""),
+            "city_name": user.get("city_name", ""),
+            "latitude": user.get("latitude"),
+            "longitude": user.get("longitude"),
+        }
+
+        # Bio hashtags and mentions
+        import re
+        profile["bio_hashtags"] = re.findall(r'#(\w+)', user.get("biography", ""))
+        profile["bio_mentions"] = re.findall(r'@(\w+)', user.get("biography", ""))
+
+        findings.append(Finding(
+            source=f"instagram:{method}",
+            data_type="profile",
+            value=profile,
+            confidence=0.92,
+            metadata={"site": "instagram", "method": method},
+        ))
 
         return findings
 
@@ -378,6 +446,9 @@ class InstagramEagleEye(BaseModule):
             "imginn": f"https://imginn.com/{username}",
             "dumpor": f"https://dumpor.com/v/{username}",
             "gramhir": f"https://gramhir.com/profile/{username}/{username}",
+            "storiesig": f"https://storiesig.net/stories/{username}",
+            "instastories": f"https://insta-stories.online/en/profile/{username}",
+            "inflact": f"https://inflact.com/profiles/{username}/",
         }
 
         url = viewer_urls.get(viewer)
