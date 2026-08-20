@@ -228,7 +228,7 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     from ..modules.phone_intel import PhoneIntel
     from ..modules.email_enricher import EmailEnricher
     from ..modules.cert_transparency import CertTransparency
-    from ..modules.telegram_osint import TelegramOSINT
+    from ..modules.telegram_eagle import TelegramEagleEye
     from ..modules.google_dorking import GoogleDorking
     from ..modules.image_osint import ImageOSINT
     from ..modules.secret_scanner import SecretScanner
@@ -242,8 +242,8 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     # Always include: Iranian platforms (our competitive advantage)
     all_modules.extend(get_iranian_modules(pipeline.config))
 
-    # Always include: Telegram OSINT (huge in Iran)
-    all_modules.append(TelegramOSINT(pipeline.config))
+    # Always include: Telegram Eagle Eye (huge in Iran)
+    all_modules.append(TelegramEagleEye(pipeline.config))
 
     if mode in ("full", "hawk"):
         all_modules.append(EmailEnricher(pipeline.config))
