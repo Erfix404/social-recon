@@ -234,7 +234,8 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     from ..modules.secret_scanner import SecretScanner
     from ..modules.network_recon import ShodanRecon, CensysRecon, SecurityTrailsRecon, DNSRecon
     from ..modules.wayback_metadata import WaybackRecon, MetadataExtractor, GeolocationOSINT
-    from ..modules.social_scrapers import TwitterScraper, TikTokScraper, RedditScraper
+    from ..modules.social_scrapers import TikTokScraper, RedditScraper
+    from ..modules.twitter_eagle import TwitterEagleEye
     from ..modules.instagram_eagle import InstagramEagleEye
     from ..modules.cloud_enum import CloudEnum
     from ..modules.maigret_bridge import MaigretBridge
@@ -259,7 +260,7 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
         all_modules.append(GoogleDorking(pipeline.config))
         all_modules.append(ImageOSINT(pipeline.config))
         all_modules.append(InstagramEagleEye(pipeline.config))
-        all_modules.append(TwitterScraper(pipeline.config))
+        all_modules.append(TwitterEagleEye(pipeline.config))
         all_modules.append(TikTokScraper(pipeline.config))
         all_modules.append(RedditScraper(pipeline.config))
         all_modules.append(WaybackRecon(pipeline.config))
