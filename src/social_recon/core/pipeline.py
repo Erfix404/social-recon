@@ -236,6 +236,7 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     from ..modules.wayback_metadata import WaybackRecon, MetadataExtractor, GeolocationOSINT
     from ..modules.social_scrapers import InstagramScraper, TwitterScraper, TikTokScraper, RedditScraper
     from ..modules.cloud_enum import CloudEnum
+    from ..modules.maigret_bridge import MaigretBridge
     from ..utils.report import generate_report
 
     target_type, clean = classify(target)
@@ -243,7 +244,8 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
 
     all_modules = []
 
-    # Always include: Iranian platforms (our competitive advantage)
+    # Always include: Maigret (3000+ sites) + Iranian platforms
+    all_modules.append(MaigretBridge(pipeline.config))
     all_modules.extend(get_iranian_modules(pipeline.config))
 
     # Always include: Telegram Eagle Eye (huge in Iran)
