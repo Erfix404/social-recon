@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any
 
 from ..modules.base import BaseModule, ModuleResult, ModuleCategory
-from .config import OUTPUT_DIR, MAX_CONCURRENT_MODULES, SCAN_MODES
+from .config import OUTPUT_DIR, MAX_CONCURRENT_MODULES, SCAN_MODES, SHODAN_API_KEY, CENSYS_API_ID, SECURITYTRAILS_API_KEY
 
 
 class Pipeline:
@@ -232,6 +232,10 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     from ..modules.google_dorking import GoogleDorking
     from ..modules.image_osint import ImageOSINT
     from ..modules.secret_scanner import SecretScanner
+    from ..modules.network_recon import ShodanRecon, CensysRecon, SecurityTrailsRecon, DNSRecon
+    from ..modules.wayback_metadata import WaybackRecon, MetadataExtractor, GeolocationOSINT
+    from ..modules.social_scrapers import InstagramScraper, TwitterScraper, TikTokScraper, RedditScraper
+    from ..modules.cloud_enum import CloudEnum
     from ..utils.report import generate_report
 
     target_type, clean = classify(target)
@@ -251,10 +255,26 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
         all_modules.append(BreachChecker(pipeline.config))
         all_modules.append(GoogleDorking(pipeline.config))
         all_modules.append(ImageOSINT(pipeline.config))
+        all_modules.append(InstagramScraper(pipeline.config))
+        all_modules.append(TwitterScraper(pipeline.config))
+        all_modules.append(TikTokScraper(pipeline.config))
+        all_modules.append(RedditScraper(pipeline.config))
+        all_modules.append(WaybackRecon(pipeline.config))
+        all_modules.append(GeolocationOSINT(pipeline.config))
+        all_modules.append(DNSRecon(pipeline.config))
 
     if mode == "hawk":
         all_modules.append(CertTransparency(pipeline.config))
         all_modules.append(SecretScanner(pipeline.config))
+        all_modules.append(MetadataExtractor(pipeline.config))
+        all_modules.append(CloudEnum(pipeline.config))
+        # API-key-gated modules (only if keys are set)
+        if SHODAN_API_KEY:
+            all_modules.append(ShodanRecon(pipeline.config))
+        if CENSYS_API_ID:
+            all_modules.append(CensysRecon(pipeline.config))
+        if SECURITYTRAILS_API_KEY:
+            all_modules.append(SecurityTrailsRecon(pipeline.config))
 
     pipeline.register_modules(all_modules)
     result = await pipeline.execute()
