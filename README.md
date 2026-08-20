@@ -1,15 +1,27 @@
-# Social-Recon v2.0 — OSINT Reconnaissance Framework
+# Social-Recon v2.0 — Advanced OSINT Reconnaissance Framework
 
-Advanced social media reconnaissance tool with **exceptional Iranian platform coverage**. Extracts public data from usernames, emails, and phone numbers across global and Persian platforms.
+A powerful OSINT tool that extracts maximum intelligence from usernames, emails, phone numbers, and domains — using **free public sources first**, with optional API enhancements.
+
+## Philosophy: Free First
+
+```
+Layer 1: FREE (always runs)     — HTTP scraping, Google Dorking, web viewers,
+                                   public APIs, DuckDuckGo, Wayback Machine
+Layer 2: FREE TOOLS (optional)  — Maigret, PhoneInfoga (CLI, no API key)
+Layer 3: API KEYS (optional)    — Shodan, Censys, HIBP, Telegram MTProto
+```
+
+**Every module works without API keys.** API keys only add extra depth.
 
 ## What Makes This Different
 
 - **25+ Iranian platforms** — Aparat, Virgool, Jobinja, Quera, Digikala, Eitaa, Bale, Rubika and more. Maigret (3000+ sites) has ZERO Iranian coverage.
+- **Eagle Eye modules** — Deep recon for Telegram, Instagram, and Twitter/X
 - **Iranian breach database** — Checks against Digikala, Aparat, Snapp breaches that HIBP doesn't track.
 - **Phone operator identification** — Instantly identify همراه اول، ایرانسل، رایتل from prefix.
-- **Async pipeline** — Modules run concurrently for maximum speed.
-- **Plugin architecture** — Easy to add new modules.
-- **Intelligent chaining** — Found email feeds into phone search, which feeds into social lookup.
+- **Async pipeline** — 25 modules run concurrently for maximum speed.
+- **Confidence scoring** — Multi-source corroboration with confidence labels.
+- **Entity graph** — Interactive relationship visualization (vis-network.js + Mermaid).
 
 ## Quick Start
 
@@ -17,77 +29,99 @@ Advanced social media reconnaissance tool with **exceptional Iranian platform co
 # Install dependencies
 pip install -r requirements.txt
 
-# Run a scan
-python run.py <username|email|phone> [light|full|hawk]
+# Run a scan (all free methods, no API keys needed)
+python run.py <username|email|phone|domain> [light|full|hawk]
 
 # Examples
 python run.py erfix404              # Full scan on username
 python run.py user@email.com hawk   # Maximum recon on email
-python run.py 09123456789 light     # Quick phone lookup
+python run.py 09123456789 hawk      # Phone scan (Iranian)
+python run.py example.com hawk      # Domain scan
 ```
 
 ## Scan Modes
 
-| Mode | Description | Time |
-|------|-------------|------|
-| `light` | Fast scan — username/email basic lookup | ~30s |
-| `full` | All passive modules including 25+ Iranian platforms | ~2-5min |
-| `hawk` | Maximum recon — breach checks, CT logs, dorking, all platforms | ~5-10min |
+| Mode | Modules | Time | Description |
+|------|---------|------|-------------|
+| `light` | 4 | ~30s | Fast — Maigret + Iranian platforms + Telegram |
+| `full` | 18 | ~2-5min | All passive modules (all free, no API keys) |
+| `hawk` | 25 | ~5-10min | Maximum — includes active modules + API-key modules |
 
-## Modules
+## Eagle Eye Modules
 
-### Iranian Platforms (Our Advantage)
-- **25+ platforms**: Aparat, Virgool, Jobinja, Quera, Hamijar, Karboom, IranTalent, Digikala, Basalam, Torob, Eitaa, Rubika, iGap, Bale, CafeBazaar, Myket, SnappFood, MrBilit, Alibaba.ir, Zoomit, Zoomg, Filimo, and more
-- **Aparat deep recon**: Profile, videos, followers via public API
-- **Phone operator ID**: همراه اول، ایرانسل، رایتل، تالیا، شاتل موبایل
+### Telegram Eagle Eye
+- MTProto integration (Telethon) — phone lookup, channel analysis, member scraping
+- TGStat API (ir.tgstat.com) — 125K+ Iranian channel stats
+- Telegram search engines (TelegramDB, Lyzem)
+- Google Dorking for Telegram content
+- Profile picture history, forward network mapping
 
-### Global Platforms
-- **Username enumeration**: Maigret integration (3000+ sites)
-- **GitHub**: Profile, events, commit emails, repo secrets
-- **Telegram**: t.me scraping, channel search
-- **Instagram/X**: Profile and content analysis
+### Instagram Eagle Eye
+- Mobile API (i.instagram.com) — HD profile pics, business info, address
+- **Google Dorking for commented posts** — see where someone commented
+- Web viewers (Picuki, Imginn, StoriesIG, Dumpor, Inflact)
+- Tagged photos, stories, highlights detection
+- Followers/following lists (with auth)
 
-### Enrichment
-- **Email enrichment**: Gravatar, EmailRep, GitHub commit search, social probing
-- **Phone intelligence**: Operator ID, OSINT dorks, social link discovery
-- **Breach checking**: HIBP + Iranian breach databases
-- **Certificate Transparency**: crt.sh, CertSpotter for subdomain discovery
+### Twitter/X Eagle Eye
+- Syndication API — public tweet lookup (no auth needed)
+- Nitter instances — anonymous profile/tweet viewing
+- oEmbed API — embed data
+- Google Dorking for tweets and replies
+- Wayback Machine — deleted tweet recovery
 
-### Infrastructure
-- **DNS/WHOIS**: Domain intelligence
-- **Network recon**: Shodan, Censys integration
-- **Secret scanning**: API keys, tokens in public code
+## All Modules (25)
+
+| Module | Mode | Free? | Description |
+|--------|------|-------|-------------|
+| maigret | all | ✅ | 3000+ sites username check |
+| iranian_platforms | all | ✅ | 25+ Persian platforms |
+| aparat_deep | all | ✅ | Aparat API deep recon |
+| telegram_eagle | all | ✅ | Telegram OSINT |
+| instagram_eagle | full+ | ✅ | Instagram deep recon |
+| twitter_eagle | full+ | ✅ | Twitter/X recon |
+| tiktok | full+ | ✅ | TikTok profile |
+| reddit | full+ | ✅ | Reddit + deleted content |
+| email_enricher | full+ | ✅ | Email enrichment |
+| phone_intel | full+ | ✅ | Iranian operator + dorking |
+| breach_checker | full+ | ✅ | HIBP + Iranian breaches |
+| google_dorking | full+ | ✅ | Automated dorking |
+| image_osint | full+ | ✅ | Profile images |
+| wayback | full+ | ✅ | Historical data |
+| geolocation | full+ | ✅ | IP + phone geo |
+| dns_recon | full+ | ✅ | DNS records |
+| cert_transparency | hawk | ✅ | CT log mining |
+| secret_scanner | hawk | ✅ | Credential scanning |
+| metadata | hawk | ✅ | EXIF extraction |
+| cloud_enum | hawk | ✅ | S3/GCP/Azure buckets |
+| shodan | hawk | 🔑 | IoT + ports + CVEs |
+| censys | hawk | 🔑 | Host search |
+| securitytrails | hawk | 🔑 | DNS history |
 
 ## Output
 
 ```
 output/<target>/
-├── recon_results.json      # All findings (structured JSON)
-├── report.md               # Human-readable report
-└── images/                 # Downloaded profile images
+├── recon_results.json    # Full JSON with confidence scores
+├── report.md             # Persian report + Mermaid entity graph
+├── report.html           # Interactive HTML (dark theme, charts)
+├── findings.csv          # Spreadsheet export
+└── images/               # Downloaded profile images
 ```
 
-## Project Structure
+## Optional API Keys
 
-```
-social-recon/
-├── run.py                    # Entry point
-├── src/social_recon/
-│   ├── core/
-│   │   ├── config.py         # Centralized configuration
-│   │   ├── pipeline.py       # Async pipeline orchestrator
-│   │   └── input_classifier.py
-│   ├── modules/
-│   │   ├── base.py           # Module base class
-│   │   ├── iranian_platforms.py   # 25+ Iranian platforms
-│   │   ├── breach_checker.py      # HIBP + Iranian breaches
-│   │   ├── phone_intel.py         # Phone number intelligence
-│   │   ├── email_enricher.py      # Email enrichment
-│   │   └── cert_transparency.py   # CT log mining
-│   └── utils/
-├── scripts/                  # Legacy scripts (v1)
-├── requirements.txt
-└── setup.py
+```bash
+export TELEGRAM_API_ID=12345          # Telegram MTProto
+export TELEGRAM_API_HASH=abc123       # Telegram MTProto
+export INSTAGRAM_SESSION_ID=xxx       # Instagram auth features
+export SHODAN_API_KEY=xxx             # Shodan
+export CENSYS_API_ID=xxx              # Censys
+export CENSYS_API_SECRET=xxx          # Censys
+export HIBP_API_KEY=xxx               # Have I Been Pwned
+export SECURITYTRAILS_API_KEY=xxx     # SecurityTrails
+export TWITTER_AUTH_TOKEN=xxx         # Twitter enhanced
+export TWITTER_CT0=xxx                # Twitter enhanced
 ```
 
 ## Adding New Modules
@@ -107,26 +141,10 @@ class MyModule(BaseModule):
         return ModuleResult(module_name=self.name, success=True, findings=findings)
 ```
 
-## Environment Variables
-
-```bash
-# Optional API keys for enhanced functionality
-export SHODAN_API_KEY="..."
-export HIBP_API_KEY="..."
-export HUNTER_API_KEY="..."
-export TELEGRAM_API_ID="..."
-export TELEGRAM_API_HASH="..."
-export VIRUSTOTAL_API_KEY="..."
-export SECURITYTRAILS_API_KEY="..."
-
-# Optional proxy
-export SOCIAL_RECON_PROXY="socks5://127.0.0.1:9050"  # Tor
-```
-
 ## Legal Notice
 
 Only public data is collected. No login, no cookies, no private access. This tool is for authorized security research and OSINT investigations only.
 
-## License
+## Author
 
-MIT
+**Erfix404** — [github.com/Erfix404](https://github.com/Erfix404)
