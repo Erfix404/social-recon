@@ -348,6 +348,17 @@ def _generate_html(data: dict, graph: dict = None) -> str:
             conf_color = "#f44336" if conf >= 0.8 else "#ff9800" if conf >= 0.5 else "#8b949e"
             secrets_html += f'<tr><td>{stype}</td><td><code>{v}</code></td><td>{src}</td><td style="color:{conf_color}">{conf:.0%}</td></tr>'
 
+    # Pre-build secrets section (avoids nested f-string — Python <3.12 limitation)
+    secrets_section = ""
+    if secrets_html:
+        secrets_section = f"""<h2>🔐 اسرار و اطلاعات حساس</h2>
+<div class="section">
+<table>
+    <tr><th>نوع</th><th>مقدار</th><th>منبع</th><th>اعتماد</th></tr>
+    {secrets_html}
+</table>
+</div>"""
+
     return f"""<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
@@ -438,13 +449,7 @@ li {{ margin: 6px 0; }}
 </table>
 </div>
 
-{f"""<h2>🔐 اسرار و اطلاعات حساس</h2>
-<div class="section">
-<table>
-    <tr><th>نوع</th><th>مقدار</th><th>منبع</th><th>اعتماد</th></tr>
-    {secrets_html}
-</table>
-</div>""" if secrets_html else ''}
+{secrets_section}
 
 <div class="footer">
     <p>Social-Recon v2.0 — فقط داده‌های عمومی — تولید شده در {time.strftime('%Y-%m-%d %H:%M')}</p>
