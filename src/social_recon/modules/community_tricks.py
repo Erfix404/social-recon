@@ -33,6 +33,8 @@ class CommunityTricks(BaseModule):
                 self._linktree_beacons(client, target),
                 self._telegram_bots_check(client, target),
                 self._osint_dorks_collection(client, target, target_type),
+                self._instagram_login_bypass_tips(client, target),
+                self._telegram_phone_trick(client, context),
             ]
 
             results = await asyncio.gather(*tasks, return_exceptions=True)
@@ -397,46 +399,136 @@ class CommunityTricks(BaseModule):
 
         return findings
 
-    # ── Instagram Login Bypass Tips ──────────────────────────────────
+    # ── Instagram Login Bypass Tips (@OsintStash thread, 43 favs) ────
 
     async def _instagram_login_bypass_tips(self, client: httpx.AsyncClient, username: str) -> list[Finding]:
-        """Community tips for viewing Instagram without login."""
+        """Community tips for viewing Instagram without login.
+
+        Sources: @OsintStash Authorization Bypass Thread (5 parts),
+        plus the ?__a=1 user ID trick and users/{ID}/info/ API.
+        """
         findings = []
 
-        # These are documented community techniques
-        tips = [
-            {
-                "trick": "UBlock Origin Filter",
-                "description": "نصب اکستنشن UBlock Origin و اضافه کردن فیلتر برای حذف popup لاگین",
-                "filter": "##.RnEpo.Yx5HN\n##body:style(overflow: visible !important;)",
-                "platform": "instagram",
-            },
-            {
-                "trick": "DevTools Method",
-                "description": "F12 → حذف div لاگین → تغییر overflow body به visible",
-                "steps": [
-                    "1. باز کردن پروفایل اینستاگرام",
-                    "2. F12 → Developer Tools",
-                    "3. پیدا کردن <div class='RnEpo Yx5HN'> و حذف آن",
-                    "4. تغییر <body style='overflow: hidden;'> به overflow: visible",
-                ],
-                "platform": "instagram",
-            },
-            {
-                "trick": "JSON API",
-                "description": "اضافه کردن ?__a=1 به URL پروفایل برای دریافت JSON",
-                "url_pattern": f"https://www.instagram.com/{username}/?__a=1",
-                "platform": "instagram",
-            },
-        ]
+        # The full @OsintStash bypass thread (verified working steps)
+        bypass_thread = {
+            "trick": "Instagram Authorization Bypass (DevTools)",
+            "author": "@OsintStash on X",
+            "thread_url": f"https://x.com/i/web/status/1189575640279859204",
+            "steps": [
+                "1. Open developer tools by pressing F12 or Ctrl+Shift+I",
+                "2. Go to the 'Elements' tab.",
+                "3. In the HTML tree of the page, select the last <div>-block with the parameter \"role='presentation'\" before closing </body>.",
+                "4. Right-click on it and select 'Delete element' or click 'Delete'.",
+                "5. In the <body> tag remove the parameter 'overflow: hidden' by unchecking the box in Styles pane.",
+            ],
+            "result": "پروفایل کامل بدون popup لاگین قابل اسکرول است",
+            "platform": "instagram",
+        }
+        findings.append(Finding(
+            source="community:ig_bypass_thread",
+            data_type="search_hit",
+            value=bypass_thread,
+            confidence=0.85,
+            metadata={"type": "community_tip", "platform": "instagram", "source": "@OsintStash"},
+        ))
 
-        for tip in tips:
+        # User ID → info API trick (@OsintStash, 73 favs)
+        api_trick = {
+            "trick": "User ID → Private Info API",
+            "author": "@OsintStash",
+            "steps": [
+                "1. Get user ID: add '?__a=1' to profile URL",
+                f"2. Example: https://www.instagram.com/{username}/?__a=1 → extract 'id' field",
+                "3. Query: https://i.instagram.com/api/v1/users/{USER_ID}/info/",
+            ],
+            "returns": ["full_name", "biography", "follower_count", "hd_profile_pic", "public_email", "public_phone"],
+            "platform": "instagram",
+        }
+        findings.append(Finding(
+            source="community:ig_api_trick",
+            data_type="search_hit",
+            value=api_trick,
+            confidence=0.85,
+            metadata={"type": "community_tip", "platform": "instagram"},
+        ))
+
+        # UBlock filter variant
+        ublock_tip = {
+            "trick": "UBlock Origin Filter",
+            "description": "حذف دائمی popup لاگین با فیلتر UBlock",
+            "filter": "##.RnEpo.Yx5HN\n##body:style(overflow: visible !important;)",
+            "platform": "instagram",
+        }
+        findings.append(Finding(
+            source="community:ig_ublock",
+            data_type="search_hit",
+            value=ublock_tip,
+            confidence=0.8,
+            metadata={"type": "community_tip", "platform": "instagram"},
+        ))
+
+        return findings
+
+    # ── Telegram Phone Lookup Trick (golden tweet, 424 favs) ────────
+
+    async def _telegram_phone_trick(self, client: httpx.AsyncClient, context: dict = None) -> list[Finding]:
+        """The golden Telegram phone-number OSINT trick from X (424 favs).
+
+        Key insight: check t.me/{phone} BEFORE saving the contact —
+        once saved, Telegram shows YOUR saved name instead of their real one.
+        """
+        findings = []
+
+        phones = []
+        if context:
+            phones.extend(context.get("phones", [])[:5])
+
+        for phone in phones:
+            clean = phone.replace("+98", "").replace(" ", "").replace("-", "").lstrip("0")
+            intl = f"+98{clean}" if len(clean) == 10 else phone
+
+            # t.me with international format shows public profile if linked
+            resp = await self._make_request(
+                client, "GET",
+                f"https://t.me/{intl}",
+                timeout=10,
+            )
+            linked = bool(resp and resp.status_code == 200 and "tgme_page_title" in resp.text)
+
+            title = None
+            if linked:
+                m = re.search(r'tgme_page_title[^>]*>\s*([^<]+)', resp.text)
+                if m:
+                    title = m.group(1).strip()
+
             findings.append(Finding(
-                source="community:ig_tip",
+                source="community:tg_phone_trick",
+                data_type="profile",
+                value={
+                    "trick": "t.me phone lookup (BEFORE saving to contacts)",
+                    "phone": phone,
+                    "international_format": intl,
+                    "telegram_linked": linked,
+                    "real_username_visible": title,
+                    "why_before_saving": "بعد از ذخیره مخاطب، تلگرام اسم ذخیره‌شده شما رو نشون میده نه اسم واقعی طرف — اطلاعات اصلی از دست میره",
+                    "url": f"https://t.me/{intl}",
+                },
+                confidence=0.9 if linked else 0.7,
+                metadata={"type": "community_tip", "source": "X golden tweet (424 favs)"},
+            ))
+
+        # Also document the trick itself even without phones in context
+        if not phones:
+            findings.append(Finding(
+                source="community:tg_phone_trick",
                 data_type="search_hit",
-                value=tip,
-                confidence=0.8,
-                metadata={"type": "community_tip", "platform": "instagram"},
+                value={
+                    "trick": "Telegram phone lookup via t.me",
+                    "method": "https://t.me/+98XXXXXXXXX — shows public profile BEFORE saving contact",
+                    "warning": "همیشه قبل از ذخیره شماره چک کن، بعد از ذخیره اسم واقعی پنهان میشه",
+                },
+                confidence=0.85,
+                metadata={"type": "community_tip"},
             ))
 
         return findings

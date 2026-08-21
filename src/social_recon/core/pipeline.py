@@ -240,6 +240,7 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     from ..modules.cloud_enum import CloudEnum
     from ..modules.maigret_bridge import MaigretBridge
     from ..modules.community_tricks import CommunityTricks
+    from ..modules.x_search import XSearch
     from ..utils.report import generate_report
 
     target_type, clean = classify(target)
@@ -251,6 +252,7 @@ async def run_pipeline(target: str, mode: str = "full") -> dict:
     all_modules.append(MaigretBridge(pipeline.config))
     all_modules.extend(get_iranian_modules(pipeline.config))
     all_modules.append(CommunityTricks(pipeline.config))
+    all_modules.append(XSearch(pipeline.config))
 
     # Always include: Telegram Eagle Eye (huge in Iran)
     all_modules.append(TelegramEagleEye(pipeline.config))
